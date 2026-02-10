@@ -2,7 +2,11 @@ const createElement = (arr) => {
     const elements  = arr.map(element => `<p class="text-lg btn">${element}</p>`);
     return elements.join(" ")
 }
-
+function pronounceWord(word) {
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN"; // English
+  window.speechSynthesis.speak(utterance);
+}
 const loaderManage = (status) => {
     if (status === true) {
         document.getElementById("loader").classList.remove("hidden")
@@ -54,7 +58,7 @@ const loadWorldDetails = async (id) => {
 
 }
 const displayWordDetails = (details) => {
-    console.log(details);
+    // console.log(details);
 
     const detailsContainer = document.getElementById("detailsContainer")
     detailsContainer.innerHTML = `
@@ -92,6 +96,8 @@ const displayLevelWord = (words) => {
                     <h2 class="text-3xl font-semibold">নেক্সট Lesson এ যান</h2>
         </div>
         `
+        loaderManage(false)
+        return;
     }
 
     // {id: 1, level: 3, word: 'Abundant', meaning: null, pronunciation: 'অবানডান্ট'}
@@ -100,10 +106,10 @@ const displayLevelWord = (words) => {
         wordCard.innerHTML = `
         <div class="p-9 bg-white rounded-lg space-y-5 text-center">
                     <h3 class="text-2xl font-bold">${word.word ? word.word : "শব্দ পাওয়া যায়নি"}</h3>
-                    <p class="text-xl ">Meaning /Pronounciation</p>
+                    <p class="text-xl ">Meaning / Pronunciation</p>
                     <h3 class="text-xl font-medium">"${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation ? word.pronunciation : "pronunciation পাওয়া যায়নি"}"</h3>
                     <div class="flex justify-between">
-                        <button onclick="loadWorldDetails(${word.id})" class="cursor-pointer p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-circle-info"></i></button> <button class="p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-volume-high"></i></button>
+                        <button onclick="loadWorldDetails(${word.id})" class="cursor-pointer p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-circle-info"></i></button> <button onclick="pronounceWord('${word.word}')" class="p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
                 </div>
         `
@@ -129,3 +135,21 @@ const lessonDisplay = (lessons) => {
 
 
 }
+
+document.getElementById("searchbtn").addEventListener("click",() => {
+    // console.log("clicked");
+    const search = document.getElementById("searchInput")
+    const searchValue = search.value.trim().toLowerCase()
+    
+    fetch("https://openapi.programming-hero.com/api/words/all")
+    .then(res => res.json())
+    .then(data => {
+        const allWord = data.data
+        const filteredWords = allWord.filter(word => word.word.toLowerCase().includes(searchValue))
+        // console.log(filteredWord);
+        removeActive()
+        displayLevelWord(filteredWords)
+        
+    })
+    
+})
