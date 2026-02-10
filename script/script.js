@@ -1,3 +1,19 @@
+const createElement = (arr) => {
+    const elements  = arr.map(element => `<p class="text-lg btn">${element}</p>`);
+    return elements.join(" ")
+}
+
+const loaderManage = (status) => {
+    if (status === true) {
+        document.getElementById("loader").classList.remove("hidden")
+        document.getElementById("wordContainer").classList.add("hidden")
+    }
+    else{
+        document.getElementById("wordContainer").classList.remove("hidden")
+        document.getElementById("loader").classList.add("hidden")
+    }
+}
+
 const lessonLoad = () => {
     fetch("https://openapi.programming-hero.com/api/levels/all")
         .then(res => res.json())
@@ -13,6 +29,7 @@ const removeActive = () => {
 }
 
 const loaDLevelWord = (id) => {
+    loaderManage(true)
     const url = `https://openapi.programming-hero.com/api/level/${id}`
     // console.log(url);
     fetch(url)
@@ -38,36 +55,7 @@ const loadWorldDetails = async (id) => {
 }
 const displayWordDetails = (details) => {
     console.log(details);
-    /**
-     * 
-     * id
-: 
-5
-level
-: 
-1
-meaning
-: 
-"আগ্রহী"
-partsOfSpeech
-: 
-"adjective"
-points
-: 
-1
-pronunciation
-: 
-"ইগার"
-sentence
-: 
-"The kids were eager to open their gifts."
-synonyms
-: 
-(3) ['enthusiastic', 'excited', 'keen']
-word
-: 
-"Eager"
-     */
+
     const detailsContainer = document.getElementById("detailsContainer")
     detailsContainer.innerHTML = `
     <div  class="space-y-5">
@@ -82,9 +70,8 @@ word
                         </div>
                         <h4>সমার্থক শব্দ গুলো</h4>
                         <div class="">
-                            <p class="text-lg btn">Enthusiastic</p>
-                        <p class="text-lg btn">Enthusiastic</p>
-                        <p class="text-lg btn">Enthusiastic</p>
+${createElement(details.synonyms)}
+                        
                         </div>
                         
                     </div>
@@ -122,7 +109,7 @@ const displayLevelWord = (words) => {
         `
         wordContainer.appendChild(wordCard)
     });
-
+    loaderManage(false)
 }
 
 
