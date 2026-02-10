@@ -9,7 +9,7 @@ const removeActive = () => {
     const lessonButtons = document.querySelectorAll(".lesson-btn")
     // console.log(lessonButtons);
     lessonButtons.forEach(btn => btn.classList.remove("active"));
-    
+
 }
 
 const loaDLevelWord = (id) => {
@@ -22,11 +22,76 @@ const loaDLevelWord = (id) => {
             const clickBtn = document.getElementById(`lesson-btn-${id}`)
             // console.log(clickBtn);
             clickBtn.classList.add("active");
-            
+
             displayLevelWord(data.data)
         })
 }
 
+const loadWorldDetails = async (id) => {
+    // console.log(id);
+    const url = `https://openapi.programming-hero.com/api/word/${id}`;
+
+    const res = await fetch(url);
+    const details = await res.json()
+    displayWordDetails(details.data);
+
+}
+const displayWordDetails = (details) => {
+    console.log(details);
+    /**
+     * 
+     * id
+: 
+5
+level
+: 
+1
+meaning
+: 
+"আগ্রহী"
+partsOfSpeech
+: 
+"adjective"
+points
+: 
+1
+pronunciation
+: 
+"ইগার"
+sentence
+: 
+"The kids were eager to open their gifts."
+synonyms
+: 
+(3) ['enthusiastic', 'excited', 'keen']
+word
+: 
+"Eager"
+     */
+    const detailsContainer = document.getElementById("detailsContainer")
+    detailsContainer.innerHTML = `
+    <div  class="space-y-5">
+                        <h4 class="text-2xl font-semibold">${details.word} (<i class="fa-solid fa-microphone-lines"></i> :${details.pronunciation})</h4>
+                        <div class="">
+                        <p class="text-lg font-semibold">Meaning</p>
+                        <p class="text-lg font-medium">${details.meaning}</p>
+                        </div>
+                        <div class="">
+                        <h4 class="text-lg font-semibold">Example</h4>
+                        <p class="text-lg">${details.sentence}</p>
+                        </div>
+                        <h4>সমার্থক শব্দ গুলো</h4>
+                        <div class="">
+                            <p class="text-lg btn">Enthusiastic</p>
+                        <p class="text-lg btn">Enthusiastic</p>
+                        <p class="text-lg btn">Enthusiastic</p>
+                        </div>
+                        
+                    </div>
+    `
+
+    document.getElementById("my_modal_5").showModal()
+}
 const displayLevelWord = (words) => {
     // console.log(words);
     const wordContainer = document.getElementById("wordContainer")
@@ -51,7 +116,7 @@ const displayLevelWord = (words) => {
                     <p class="text-xl ">Meaning /Pronounciation</p>
                     <h3 class="text-xl font-medium">"${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation ? word.pronunciation : "pronunciation পাওয়া যায়নি"}"</h3>
                     <div class="flex justify-between">
-                        <span class="p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-circle-info"></i></span> <span class="p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-volume-high"></i></span>
+                        <button onclick="loadWorldDetails(${word.id})" class="cursor-pointer p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-circle-info"></i></button> <button class="p-4 bg-sky-100 rounded-md"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
                 </div>
         `
